@@ -4,7 +4,7 @@ const typeDefs = gql`
   type Game {
     id: ID!
     size: Int!
-    title: String
+    title: String!
     enforceSymmetry: Boolean!
     squares: [Square]!
     clues: [Clue]!
@@ -37,7 +37,7 @@ const typeDefs = gql`
 
   type Query {
     games: [Game]!
-    game($gameId: string): Game!
+    game(gameId: String): Game!
   }
 
   type Mutation {
@@ -52,35 +52,37 @@ const typeDefs = gql`
     deleteClue(input: UpdateClueInput!): DeleteClueResponse!
   }
 
-  type CreateGameInput {
+  input CreateGameInput {
     size: Int!
-    title: String
-    enforceSymmetry: Boolean!
-  }
-
-  type UpdateGameInput {
     title: String
     enforceSymmetry: Boolean
   }
 
-  type DeleteGameInput {
+  input UpdateGameInput {
+    gameId: ID!
+    title: String
+    enforceSymmetry: Boolean
+  }
+
+  input DeleteGameInput {
     gameId: ID!
   }
 
-  type UpdateSquareInput {
-    id: ID!
+  input UpdateSquareInput {
+    squareId: ID!
     char: String
     clueNumber: Int
   }
 
-  type CreateClueInput {
+  input CreateClueInput {
     gameId: ID!
     startingSquareId: ID!
     direction: Direction!
     clue: String!
   }
 
-  type UpdateClueInput {
+  input UpdateClueInput {
+    clueId: ID!
     clue: String
   }
 
