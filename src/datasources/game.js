@@ -1,27 +1,28 @@
 const { RESTDataSource } = require('apollo-datasource-rest');
 const { makeReducer, transformInputs } = require('./utils');
 
+const BASE_URL = 'http://127.0.0.1:5000/api'
+
 class GameAPI extends RESTDataSource {
   constructor() {
     super();
-    this.baseURL = 'http://127.0.0.1:5000/api';
+    this.baseURL = `${BASE_URL}/games`;
   }
 
-  baseReducer = makeReducer()
+  gameReducer = makeReducer()
 
   async getGames() {
-    const { data } = await this.get('/games/');
-    console.log(data[0])
-    return Array.isArray(data) ? data.map(game => this.baseReducer({ data: game })) : []
+    const { data } = await this.get('/');
+    return Array.isArray(data) ? data.map(game => this.gameReducer({ data: game })) : []
   }
 
   async getGameById(gameId) {
-    const response = await this.get(`/games/${gameId}`);
-    return this.baseReducer(response)
+    const response = await this.get(`/${gameId}`);
+    return this.gameReducer(response)
   }
 
   async createGame(data) {
-    const response = await this.post('/games/', { data });
+    const response = await this.post('/', { data });
     if (!response) {
       return {
         success: false,
@@ -31,12 +32,12 @@ class GameAPI extends RESTDataSource {
 
     return {
       success: true,
-      game: this.baseReducer(response)
+      game: this.gameReducer(response)
     }
   }
 
   async updateGame(gameId, data) {
-    const response = await this.patch(`/games/${gameId}`, { data: transformInputs(data) });
+    const response = await this.patch(`/${gameId}`, { data: transformInputs(data) });
     if (!response) {
       return {
         success: false,
@@ -46,13 +47,13 @@ class GameAPI extends RESTDataSource {
 
     return {
       success: true,
-      game: this.baseReducer(response)
+      game: this.gameReducer(response)
     }
   }
 
   async deleteGame(gameId) {
     // FIXME: can we actually access the status code here?
-    await this.delete(`/games/${gameId}`);
+    await this.delete(`/${gameId}`);
 
     return {
       success: true

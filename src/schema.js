@@ -4,20 +4,18 @@ const typeDefs = gql`
   type Game {
     id: ID!
     size: Int!
-    title: String!
+    title: String
     enforceSymmetry: Boolean!
     squares: [Square]!
     clues: [Clue]!
   }
 
   type Square {
-    id: ID!
     gameId: String!
     game: Game!
-    row: Int!
-    col: Int!
-    char: String!
-    clueNumber: Int!
+    index: Int!
+    char: String
+    writeable: Boolean!
   }
 
   enum Direction {
@@ -26,11 +24,9 @@ const typeDefs = gql`
   }
 
   type Clue {
-    id: ID!
     gameId: String!
-    game: Game!
-    startingSquare: Square!
-    clueNumber: Int!
+    squareIndex: Int!
+    square: Square!
     direction: Direction!
     clue: String
   }
@@ -47,9 +43,8 @@ const typeDefs = gql`
 
     updateSquare(input: UpdateSquareInput!): UpdateSquareResponse!
 
-    createClue(input: CreateClueInput!): UpdateClueResponse!
-    updateClue(input: UpdateClueInput!): UpdateClueResponse!
-    deleteClue(input: UpdateClueInput!): DeleteClueResponse!
+    upsertClue(input: UpsertClueInput!): UpsertClueResponse!
+    deleteClue(input: DeleteClueInput!): DeleteClueResponse!
   }
 
   input CreateGameInput {
@@ -69,21 +64,22 @@ const typeDefs = gql`
   }
 
   input UpdateSquareInput {
-    squareId: ID!
+    gameId: ID!
+    index: Int!
     char: String
-    clueNumber: Int
   }
 
-  input CreateClueInput {
+  input UpsertClueInput {
     gameId: ID!
-    startingSquareId: ID!
+    squareIndex: Int!
     direction: Direction!
     clue: String!
   }
 
-  input UpdateClueInput {
-    clueId: ID!
-    clue: String
+  input DeleteClueInput {
+    gameId: ID!
+    squareIndex: Int!
+    direction: Direction!
   }
 
   type UpdateGameResponse {
@@ -103,7 +99,7 @@ const typeDefs = gql`
     square: Square
   }
 
-  type UpdateClueResponse {
+  type UpsertClueResponse {
     success: Boolean!
     message: String
     clue: Clue
