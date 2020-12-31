@@ -16,5 +16,6 @@ module.exports = {
 
   Game: {
     clues: async ({ id: gameId }, _, { dataSources: { clueAPI } }) => clueAPI.getCluesForGame(gameId),
+    squares: async ({ id: gameId }, _, { dataSources: { squareAPI } }) => squareAPI.getSquaresForGame(gameId),
   }
 }

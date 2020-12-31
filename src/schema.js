@@ -1,16 +1,25 @@
 const { gql } = require('apollo-server')
 
 const typeDefs = gql`
+  enum PresetSize {
+    MINI
+    MINI_PLUS
+    STANDARD
+    STANDARD_PLUS
+    SUNDAY
+  }
+
   type Game {
     id: ID!
     size: Int!
     title: String
     enforceSymmetry: Boolean!
-    squares: [Square]!
+    squares: [Square!]!
     clues: [Clue]!
   }
 
   type Square {
+    id: ID!
     gameId: String!
     game: Game!
     index: Int!
@@ -24,6 +33,7 @@ const typeDefs = gql`
   }
 
   type Clue {
+    id: ID!
     gameId: String!
     squareIndex: Int!
     square: Square!
@@ -48,7 +58,7 @@ const typeDefs = gql`
   }
 
   input CreateGameInput {
-    size: Int!
+    size: PresetSize!
     title: String
     enforceSymmetry: Boolean
   }

@@ -1,7 +1,16 @@
 const { RESTDataSource } = require('apollo-datasource-rest');
+const SquareAPI = require('./square');
 const { makeReducer, transformInputs } = require('./utils');
 
 const BASE_URL = 'http://127.0.0.1:5000/api'
+
+const SIZE_MAP = {
+  MINI: 5,
+  MINI_PLUS: 7,
+  STANDARD: 15,
+  STANDARD_PLUS: 16,
+  SUNDAY: 21
+}
 
 class GameAPI extends RESTDataSource {
   constructor() {
@@ -21,8 +30,8 @@ class GameAPI extends RESTDataSource {
     return this.gameReducer(response)
   }
 
-  async createGame(data) {
-    const response = await this.post('/', { data });
+  async createGame({ size, ...data }) {
+    const response = await this.post('/', { data: { size: SIZE_MAP[size], ...data } });
     if (!response) {
       return {
         success: false,

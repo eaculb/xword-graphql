@@ -20,12 +20,15 @@ module.exports.transformInputs = (data) => {
   return result;
 }
 
-module.exports.makeReducer = (overrides = {}) => {
+module.exports.makeReducer = (config) => {
   const reducer = (obj) => {
     let result = genericReducer(obj);
-    Object.entries(overrides).forEach(([key, value]) => {
-      result[key] = value
-    });
+    if (!config) {
+      return result;
+    }
+    Object.entries(config).forEach(([key, callback]) => {
+      result[key] = callback(result)
+    })
     return result;
   }
   return reducer;

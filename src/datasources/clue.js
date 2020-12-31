@@ -9,17 +9,16 @@ class ClueAPI extends RESTDataSource {
     this.baseURL = BASE_URL;
   }
 
-  baseReducer = makeReducer()
-
+  clueReducer = makeReducer({ id: ({ squareIndex, direction, gameId }) => `${gameId}:${squareIndex}:${direction}` })
 
   async getCluesForGame(gameId) {
-    const { data } = await this.get('/games/-/clues/', transformInputs({gameId}));
-    return Array.isArray(data) ? data.map(clue => this.baseReducer({ data: clue })) : []
+    const { data } = await this.get('/games/-/clues/', transformInputs({ gameId }));
+    return Array.isArray(data) ? data.map(clue => this.clueReducer({ data: clue })) : []
   }
 
   async getClueById(gameId, squareIndex, direction) {
     const response = await this.get(`/games/${gameId}/clues/${squareIndex};${direction}`)
-    return this.baseReducer(response)
+    return this.clueReducer(response)
   }
 
   async upsertClue(gameId, squareIndex, direction, data) {
@@ -37,7 +36,7 @@ class ClueAPI extends RESTDataSource {
 
     return {
       success: true,
-      clue: this.baseReducer(response)
+      clue: this.clueReducer(response)
     }
   }
 }
